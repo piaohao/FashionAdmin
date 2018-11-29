@@ -1,8 +1,8 @@
 import fetch from 'dva/fetch';
-import { notification } from 'antd';
+import {notification} from 'antd';
 import router from 'umi/router';
 import hash from 'hash.js';
-import { isAntdPro } from './utils';
+import {isAntdPro} from './utils';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -26,15 +26,28 @@ const checkStatus = response => {
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
-  const errortext = codeMessage[response.status] || response.statusText;
-  notification.error({
-    message: `请求错误 ${response.status}: ${response.url}`,
-    description: errortext,
+  return response.clone().json().then(data => {
+    const errortext = codeMessage[response.status] || response.statusText;
+    if (data && data.code) {
+      notification.error({
+        message: `请求错误 ${data.message}: ${response.url}`,
+        description: errortext,
+      });
+      const error = new Error(errortext);
+      error.name = response.status;
+      error.response = response;
+      error.code = data.code;
+      throw error;
+    }
+    notification.error({
+      message: `请求错误 ${response.status}: ${response.url}`,
+      description: errortext,
+    });
+    const error = new Error(errortext);
+    error.name = response.status;
+    error.response = response;
+    throw error;
   });
-  const error = new Error(errortext);
-  error.name = response.status;
-  error.response = response;
-  throw error;
 };
 
 const cachedSave = (response, hashcode) => {
@@ -64,6 +77,7 @@ const cachedSave = (response, hashcode) => {
  * @return {object}           An object containing either "data" or "err"
  */
 export default function request(url, option) {
+  url = "http://localhost:8080" + url;
   const options = {
     expirys: isAntdPro(),
     ...option,
@@ -79,9 +93,14 @@ export default function request(url, option) {
     .digest('hex');
 
   const defaultOptions = {
-    credentials: 'include',
+    // mode: 'no-cors',
+    // credentials: 'include',
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      token: localStorage.getItem("token"),
+    },
   };
-  const newOptions = { ...defaultOptions, ...options };
+  const newOptions = {...defaultOptions, ...options};
   if (
     newOptions.method === 'POST' ||
     newOptions.method === 'PUT' ||
@@ -145,7 +164,11 @@ export default function request(url, option) {
         return;
       }
       if (status <= 504 && status >= 500) {
-        router.push('/exception/500');
+        if (e.code === 10010) {
+          router.push('/user/login');
+        } else {
+          router.push('/exception/500');
+        }
         return;
       }
       if (status >= 404 && status < 422) {

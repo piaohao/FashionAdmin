@@ -20,3 +20,5 @@ dist/
 .vscode/
 .temp/
 node_modules/
+
+rebel.xml

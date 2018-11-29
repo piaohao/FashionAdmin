@@ -1,10 +1,15 @@
-import React, { Fragment } from 'react';
-import { formatMessage, FormattedMessage } from 'umi/locale';
-import { Button, Row, Col, Icon, Steps, Card } from 'antd';
+import React, {Fragment} from 'react';
+import {formatMessage, FormattedMessage} from 'umi/locale';
+import {Button, Row, Col, Icon, Steps, Card} from 'antd';
 import Result from '@/components/Result';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import RenderAuthorized from '@/components/Authorized';
+import { getAuthority } from '@/utils/authority';
 
-const { Step } = Steps;
+const Authority = getAuthority();
+const Authorized = RenderAuthorized(Authority);
+
+const {Step} = Steps;
 
 const desc1 = (
   <div
@@ -16,23 +21,23 @@ const desc1 = (
       textAlign: 'left',
     }}
   >
-    <div style={{ margin: '8px 0 4px' }}>
-      <FormattedMessage id="app.result.success.step1-operator" defaultMessage="Qu Lili" />
-      <Icon style={{ marginLeft: 8 }} type="dingding-o" />
+    <div style={{margin: '8px 0 4px'}}>
+      <FormattedMessage id="app.result.success.step1-operator" defaultMessage="Qu Lili"/>
+      <Icon style={{marginLeft: 8}} type="dingding-o"/>
     </div>
     <div>2016-12-12 12:32</div>
   </div>
 );
 
 const desc2 = (
-  <div style={{ fontSize: 12, position: 'relative', left: 42, textAlign: 'left' }}>
-    <div style={{ margin: '8px 0 4px' }}>
-      <FormattedMessage id="app.result.success.step2-operator" defaultMessage="Zhou Maomao" />
-      <Icon type="dingding-o" style={{ color: '#00A0E9', marginLeft: 8 }} />
+  <div style={{fontSize: 12, position: 'relative', left: 42, textAlign: 'left'}}>
+    <div style={{margin: '8px 0 4px'}}>
+      <FormattedMessage id="app.result.success.step2-operator" defaultMessage="Zhou Maomao"/>
+      <Icon type="dingding-o" style={{color: '#00A0E9', marginLeft: 8}}/>
     </div>
     <div>
       <a href="">
-        <FormattedMessage id="app.result.success.step2-extra" defaultMessage="Urge" />
+        <FormattedMessage id="app.result.success.step2-extra" defaultMessage="Urge"/>
       </a>
     </div>
   </div>
@@ -48,23 +53,23 @@ const extra = (
         marginBottom: 20,
       }}
     >
-      <FormattedMessage id="app.result.success.operate-title" defaultMessage="Project Name" />
+      <FormattedMessage id="app.result.success.operate-title" defaultMessage="Project Name"/>
     </div>
-    <Row style={{ marginBottom: 16 }}>
+    <Row style={{marginBottom: 16}}>
       <Col xs={24} sm={12} md={12} lg={12} xl={6}>
-        <span style={{ color: 'rgba(0, 0, 0, 0.85)' }}>
-          <FormattedMessage id="app.result.success.operate-id" defaultMessage="Project ID：" />
+        <span style={{color: 'rgba(0, 0, 0, 0.85)'}}>
+          <FormattedMessage id="app.result.success.operate-id" defaultMessage="Project ID："/>
         </span>
         23421
       </Col>
       <Col xs={24} sm={12} md={12} lg={12} xl={6}>
-        <span style={{ color: 'rgba(0, 0, 0, 0.85)' }}>
-          <FormattedMessage id="app.result.success.principal" defaultMessage="Principal：" />
+        <span style={{color: 'rgba(0, 0, 0, 0.85)'}}>
+          <FormattedMessage id="app.result.success.principal" defaultMessage="Principal："/>
         </span>
-        <FormattedMessage id="app.result.success.step1-operator" defaultMessage="Qu Lili" />
+        <FormattedMessage id="app.result.success.step1-operator" defaultMessage="Qu Lili"/>
       </Col>
       <Col xs={24} sm={24} md={24} lg={24} xl={12}>
-        <span style={{ color: 'rgba(0, 0, 0, 0.85)' }}>
+        <span style={{color: 'rgba(0, 0, 0, 0.85)'}}>
           <FormattedMessage
             id="app.result.success.operate-time"
             defaultMessage="Effective time："
@@ -73,18 +78,18 @@ const extra = (
         2016-12-12 ~ 2017-12-12
       </Col>
     </Row>
-    <Steps style={{ marginLeft: -42, width: 'calc(100% + 84px)' }} progressDot current={1}>
+    <Steps style={{marginLeft: -42, width: 'calc(100% + 84px)'}} progressDot current={1}>
       <Step
         title={
-          <span style={{ fontSize: 14 }}>
-            <FormattedMessage id="app.result.success.step1-title" defaultMessage="Create project" />
+          <span style={{fontSize: 14}}>
+            <FormattedMessage id="app.result.success.step1-title" defaultMessage="Create project"/>
           </span>
         }
         description={desc1}
       />
       <Step
         title={
-          <span style={{ fontSize: 14 }}>
+          <span style={{fontSize: 14}}>
             <FormattedMessage
               id="app.result.success.step2-title"
               defaultMessage="Departmental preliminary review"
@@ -95,7 +100,7 @@ const extra = (
       />
       <Step
         title={
-          <span style={{ fontSize: 14 }}>
+          <span style={{fontSize: 14}}>
             <FormattedMessage
               id="app.result.success.step3-title"
               defaultMessage="Financial review"
@@ -105,8 +110,8 @@ const extra = (
       />
       <Step
         title={
-          <span style={{ fontSize: 14 }}>
-            <FormattedMessage id="app.result.success.step4-title" defaultMessage="Finish" />
+          <span style={{fontSize: 14}}>
+            <FormattedMessage id="app.result.success.step4-title" defaultMessage="Finish"/>
           </span>
         }
       />
@@ -117,14 +122,16 @@ const extra = (
 const actions = (
   <Fragment>
     <Button type="primary">
-      <FormattedMessage id="app.result.success.btn-return" defaultMessage="Back to list" />
+      <FormattedMessage id="app.result.success.btn-return" defaultMessage="Back to list"/>
     </Button>
     <Button>
-      <FormattedMessage id="app.result.success.btn-project" defaultMessage="View project" />
+      <FormattedMessage id="app.result.success.btn-project" defaultMessage="View project"/>
     </Button>
-    <Button>
-      <FormattedMessage id="app.result.success.btn-print" defaultMessage="Print" />
-    </Button>
+    <Authorized authority="user">
+      <Button>
+        <FormattedMessage id="app.result.success.btn-print" defaultMessage="Print"/>
+      </Button>
+    </Authorized>
   </Fragment>
 );
 
@@ -133,11 +140,11 @@ export default () => (
     <Card bordered={false}>
       <Result
         type="success"
-        title={formatMessage({ id: 'app.result.success.title' })}
-        description={formatMessage({ id: 'app.result.success.description' })}
+        title={formatMessage({id: 'app.result.success.title'})}
+        description={formatMessage({id: 'app.result.success.description'})}
         extra={extra}
         actions={actions}
-        style={{ marginTop: 48, marginBottom: 16 }}
+        style={{marginTop: 48, marginBottom: 16}}
       />
     </Card>
   </PageHeaderWrapper>

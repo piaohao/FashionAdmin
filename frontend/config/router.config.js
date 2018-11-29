@@ -4,10 +4,10 @@ export default [
     path: '/user',
     component: '../layouts/UserLayout',
     routes: [
-      { path: '/user', redirect: '/user/login' },
-      { path: '/user/login', component: './User/Login' },
-      { path: '/user/register', component: './User/Register' },
-      { path: '/user/register-result', component: './User/RegisterResult' },
+      {path: '/user', redirect: '/user/login'},
+      {path: '/user/login', component: './User/Login'},
+      {path: '/user/register', component: './User/Register'},
+      {path: '/user/register-result', component: './User/RegisterResult'},
     ],
   },
   // app
@@ -18,7 +18,7 @@ export default [
     authority: ['admin', 'user'],
     routes: [
       // dashboard
-      { path: '/', redirect: '/dashboard/analysis' },
+      {path: '/', redirect: '/dashboard/analysis'},
       {
         path: '/dashboard',
         name: 'dashboard',
@@ -92,6 +92,7 @@ export default [
         path: '/list',
         icon: 'table',
         name: 'list',
+        authority: ['user'],
         routes: [
           {
             path: '/list/table-list',
@@ -166,7 +167,7 @@ export default [
             name: 'success',
             component: './Result/Success',
           },
-          { path: '/result/fail', name: 'fail', component: './Result/Error' },
+          {path: '/result/fail', name: 'fail', component: './Result/Error'},
         ],
       },
       {
@@ -252,6 +253,19 @@ export default [
                 component: './Account/Settings/NotificationView',
               },
             ],
+          },
+        ],
+      },
+      {
+        name: 'test',
+        icon: 'tool',
+        path: '/test',
+        routes: [
+          {
+            path: '/test/index',
+            name: 'test-index',
+            icon: 'tool',
+            component: './Test/Test',
           },
         ],
       },
