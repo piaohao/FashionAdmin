@@ -1,4 +1,4 @@
-package org.piaohao.fashionadmin.account.model;
+package org.piaohao.fashionadmin.module.system.account.model;
 
 import lombok.Data;
 

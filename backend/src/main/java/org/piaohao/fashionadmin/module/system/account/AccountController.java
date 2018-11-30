@@ -1,9 +1,9 @@
-package org.piaohao.fashionadmin.account;
+package org.piaohao.fashionadmin.module.system.account;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.json.JSONUtil;
-import org.piaohao.fashionadmin.account.model.LoginReq;
+import org.piaohao.fashionadmin.module.system.account.model.LoginReq;
 import org.piaohao.fashionadmin.annotation.ClearAuth;
 import org.piaohao.fashionadmin.constant.ResultCode;
 import org.piaohao.fashionadmin.util.JwtUtil;

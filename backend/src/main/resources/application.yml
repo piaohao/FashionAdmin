@@ -1,6 +1,17 @@
 spring:
   application:
     name: FashionAdmin
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://rm-uf6k2sr7a43o06xe2oo.mysql.rds.aliyuncs.com:3306/fashion_admin?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=CTT
+    username: piaohao
+    password: PIAOhao191@
+    hikari:
+      minimum-idle: 5
+      idle-timeout: 180000
+      maximum-pool-size: 10
+      auto-commit: true
 
 server:
   port: 8080

@@ -1,11 +1,23 @@
-package org.piaohao.fashionadmin.menu;
+package org.piaohao.fashionadmin.module.system.menu;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONUtil;
+import org.piaohao.fashionadmin.annotation.ClearAuth;
+import org.piaohao.fashionadmin.db.system.entity.Permission;
+import org.piaohao.fashionadmin.db.system.service.IPermissionService;
+import org.piaohao.fashionadmin.module.system.menu.model.Menu;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RestController
 public class MenuController {
+    @Autowired
+    private IPermissionService permissionService;
 
     @GetMapping("/api/getMenu")
     public Object getMenu() {
@@ -252,4 +264,47 @@ public class MenuController {
         return JSONUtil.parseArray(jsonStr);
     }
 
+//    @ClearAuth
+//    @GetMapping("/api/permissions")
+//    public Object permissions() {
+//        List<Permission> permissions = permissionService.list();
+//        Menu menu = Menu.builder().name("root").build();
+//        Permission rootPermission = new Permission();
+//        rootPermission.setCode("root");
+//        buildMenus(menu, rootPermission, permissions);
+//        return menu;
+//    }
+//
+//    private List<Menu> getMenus( Permission permissionCode, List<Permission> permissions) {
+//        List<Permission> childPermissions = permissions.stream()
+//                .filter(p -> p.getParentCode().equals(parentPermission.getCode()))
+//                .collect(Collectors.toList());
+//        if (CollectionUtil.isEmpty(childPermissions)) {
+//            menu.getParent().getChildren().add(menu);
+//            return;
+//        }
+//        List<Menu> childMenus = null;
+//        if (menu.getChildren() == null) {
+//            childMenus = new ArrayList<>();
+//            menu.setChildren(childMenus);
+//        } else {
+//            childMenus = menu.getChildren();
+//        }
+//        for (Permission permission : childPermissions) {
+//            Menu childMenu = Menu.builder()
+//                    .name(permission.getName())
+//                    .icon(permission.getIcon())
+//                    .path(permission.getUrl())
+//                    .build();
+//            childMenu.setParent(menu);
+//            List<Permission> ccPermissions = permissions.stream()
+//                    .filter(p -> p.getParentCode().equals(permission.getCode()))
+//                    .collect(Collectors.toList());
+//            if (CollectionUtil.isEmpty(ccPermissions)) {
+//                childMenus.add(childMenu);
+//                return;
+//            }
+//            buildMenus(childMenu, permission, permissions);
+//        }
+//    }
 }
