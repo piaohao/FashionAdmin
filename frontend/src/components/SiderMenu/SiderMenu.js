@@ -1,13 +1,13 @@
-import React, { PureComponent } from 'react';
-import { Layout } from 'antd';
+import React, {PureComponent} from 'react';
+import {Layout} from 'antd';
 import pathToRegexp from 'path-to-regexp';
 import classNames from 'classnames';
 import Link from 'umi/link';
 import styles from './index.less';
-import BaseMenu, { getMenuMatches } from './BaseMenu';
-import { urlToList } from '../_utils/pathTools';
+import BaseMenu, {getMenuMatches} from './BaseMenu';
+import {urlToList} from '../_utils/pathTools';
 
-const { Sider } = Layout;
+const {Sider} = Layout;
 
 /**
  * 获得菜单子节点
@@ -15,7 +15,7 @@ const { Sider } = Layout;
  */
 const getDefaultCollapsedSubMenus = props => {
   const {
-    location: { pathname },
+    location: {pathname},
     flatMenuKeys,
   } = props;
   return urlToList(pathname)
@@ -59,7 +59,7 @@ export default class SiderMenu extends PureComponent {
   }
 
   static getDerivedStateFromProps(props, state) {
-    const { pathname } = state;
+    const {pathname} = state;
     if (props.location.pathname !== pathname) {
       return {
         pathname: props.location.pathname,
@@ -70,7 +70,7 @@ export default class SiderMenu extends PureComponent {
   }
 
   isMainMenu = key => {
-    const { menuData } = this.props;
+    const {menuData} = this.props;
     return menuData.some(item => {
       if (key) {
         return item.key === key || item.path === key;
@@ -87,9 +87,19 @@ export default class SiderMenu extends PureComponent {
   };
 
   render() {
-    const { logo, collapsed, onCollapse, fixSiderbar, theme } = this.props;
-    const { openKeys } = this.state;
-    const defaultProps = collapsed ? {} : { openKeys };
+    const {logo, collapsed, onCollapse, fixSiderbar, theme} = this.props;
+    const {openKeys} = this.state;
+    // const openKeys = getDefaultCollapsedSubMenus(this.props);
+    // const defaultProps = collapsed ? {}
+    //   : {
+    //     openKeys,
+    //     selectedKeys: openKeys.pop()
+    //   };
+    const defaultProps = collapsed ? {}
+      : {
+        openKeys,
+      };
+    // const defaultProps = {};
 
     const siderClassName = classNames(styles.sider, {
       [styles.fixSiderbar]: fixSiderbar,
@@ -109,7 +119,7 @@ export default class SiderMenu extends PureComponent {
       >
         <div className={styles.logo} id="logo">
           <Link to="/">
-            <img src={logo} alt="logo" />
+            <img src={logo} alt="logo"/>
             <h1>FashionAdmin</h1>
           </Link>
         </div>
@@ -118,7 +128,7 @@ export default class SiderMenu extends PureComponent {
           mode="inline"
           handleOpenChange={this.handleOpenChange}
           onOpenChange={this.handleOpenChange}
-          style={{ padding: '16px 0', width: '100%', overflowX: 'hidden' }}
+          style={{padding: '16px 0', width: '100%', overflowX: 'hidden'}}
           {...defaultProps}
         />
       </Sider>

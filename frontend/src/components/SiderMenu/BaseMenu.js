@@ -1,13 +1,13 @@
-import React, { PureComponent } from 'react';
-import { Menu, Icon } from 'antd';
+import React, {PureComponent} from 'react';
+import {Menu, Icon} from 'antd';
 import Link from 'umi/link';
 import isEqual from 'lodash/isEqual';
 import memoizeOne from 'memoize-one';
 import pathToRegexp from 'path-to-regexp';
-import { urlToList } from '../_utils/pathTools';
+import {urlToList} from '../_utils/pathTools';
 import styles from './index.less';
 
-const { SubMenu } = Menu;
+const {SubMenu} = Menu;
 
 // Allow menu.js config icon as string or ReactNode
 //   icon: 'setting',
@@ -15,10 +15,10 @@ const { SubMenu } = Menu;
 //   icon: <Icon type="setting" />,
 const getIcon = icon => {
   if (typeof icon === 'string' && icon.indexOf('http') === 0) {
-    return <img src={icon} alt="icon" className={styles.icon} />;
+    return <img src={icon} alt="icon" className={styles.icon}/>;
   }
   if (typeof icon === 'string') {
-    return <Icon type={icon} />;
+    return <Icon type={icon}/>;
   }
   return icon;
 };
@@ -73,8 +73,8 @@ export default class BaseMenu extends PureComponent {
   };
 
   // Get the currently selected menu
-  getSelectedMenuKeys = pathname =>
-    urlToList(pathname).map(itemPath => getMenuMatches(this.flatMenuKeys, itemPath).pop());
+  getSelectedMenuKeys = (pathname, flatMenuKeys) =>
+    urlToList(pathname).map(itemPath => getMenuMatches(flatMenuKeys, itemPath).pop());
 
   /**
    * get SubMenu or Item
@@ -82,7 +82,7 @@ export default class BaseMenu extends PureComponent {
   getSubMenuOrItem = item => {
     // doc: add hideChildrenInMenu
     if (item.children && !item.hideChildrenInMenu && item.children.some(child => child.name)) {
-      const { name } = item;
+      const {name} = item;
       return (
         <SubMenu
           title={
@@ -110,10 +110,10 @@ export default class BaseMenu extends PureComponent {
    * @memberof SiderMenu
    */
   getMenuItemPath = item => {
-    const { name } = item;
+    const {name} = item;
     const itemPath = this.conversionPath(item.path);
     const icon = getIcon(item.icon);
-    const { target } = item;
+    const {target} = item;
     // Is it a http link
     if (/^https?:\/\//.test(itemPath)) {
       return (
@@ -123,7 +123,7 @@ export default class BaseMenu extends PureComponent {
         </a>
       );
     }
-    const { location, isMobile, onCollapse } = this.props;
+    const {location, isMobile, onCollapse} = this.props;
     return (
       <Link
         to={itemPath}
@@ -132,8 +132,8 @@ export default class BaseMenu extends PureComponent {
         onClick={
           isMobile
             ? () => {
-                onCollapse(true);
-              }
+              onCollapse(true);
+            }
             : undefined
         }
       >
@@ -145,9 +145,9 @@ export default class BaseMenu extends PureComponent {
 
   // permission to check
   checkPermissionItem = (authority, ItemDom) => {
-    const { Authorized } = this.props;
+    const {Authorized} = this.props;
     if (Authorized && Authorized.check) {
-      const { check } = Authorized;
+      const {check} = Authorized;
       return check(authority, ItemDom);
     }
     return ItemDom;
@@ -165,10 +165,11 @@ export default class BaseMenu extends PureComponent {
       openKeys,
       theme,
       mode,
-      location: { pathname },
+      location: {pathname},
+      flatMenuKeys,
     } = this.props;
     // if pathname can't match, use the nearest parent's key
-    let selectedKeys = this.getSelectedMenuKeys(pathname);
+    let selectedKeys = this.getSelectedMenuKeys(pathname, flatMenuKeys);
     if (!selectedKeys.length && openKeys) {
       selectedKeys = [openKeys[openKeys.length - 1]];
     }
@@ -178,7 +179,7 @@ export default class BaseMenu extends PureComponent {
         openKeys,
       };
     }
-    const { handleOpenChange, style, menuData } = this.props;
+    const {handleOpenChange, style, menuData} = this.props;
     return (
       <Menu
         key="Menu"

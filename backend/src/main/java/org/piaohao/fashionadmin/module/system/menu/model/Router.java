@@ -11,12 +11,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Menu {
+public class Router {
+    private String path;
     private String name;
     private String icon;
-    private String path;
-    private List<Menu> children;
+    private String component;
+    private List<Router> routes;
     private String code;
     private String parentCode;
-    private String component;
 }

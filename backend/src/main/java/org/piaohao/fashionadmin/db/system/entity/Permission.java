@@ -51,5 +51,7 @@ public class Permission implements Serializable {
 
     private Long updateTime;
 
+    private String component;
+
 
 }

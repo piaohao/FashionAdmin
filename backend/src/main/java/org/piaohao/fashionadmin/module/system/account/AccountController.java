@@ -20,7 +20,7 @@ public class AccountController {
         String userName = loginReq.getUserName();
         String password = loginReq.getPassword();
         String type = loginReq.getType();
-        if (password.equals("ant.design")) {
+        if (password.equals("123456")) {
             String currentAuthority = null;
             if (userName.equals("admin")) {
                 currentAuthority = "admin";

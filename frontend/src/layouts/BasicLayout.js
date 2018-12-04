@@ -24,6 +24,9 @@ const {Content} = Layout;
 
 // Conversion router to menu.
 function formatter(data, parentAuthority, parentName) {
+  if (!data) {
+    return [];
+  }
   return data
     .map(item => {
       if (!item.name || !item.path) {
@@ -37,7 +40,7 @@ function formatter(data, parentAuthority, parentName) {
       //   locale = `menu.${item.name}`;
       // }
 
-      let locale=`${item.locale}`;
+      let locale = `${item.locale}`;
       const result = {
         ...item,
         name: formatMessage({id: locale, defaultMessage: item.name}),
@@ -94,8 +97,17 @@ class BasicLayout extends React.PureComponent {
   state = {
     rendering: true,
     isMobile: false,
-    menuData: [],
+    // menuData: [],
   };
+
+  // componentWillMount() {
+  //   getMenu().then(res => {
+  //     this.setState({
+  //       menuData: memoizeOneFormatter(res),
+  //     });
+  //     this.breadcrumbNameMap = this.getBreadcrumbNameMap();
+  //   });
+  // }
 
   componentDidMount() {
     const {dispatch} = this.props;
@@ -105,14 +117,8 @@ class BasicLayout extends React.PureComponent {
     dispatch({
       type: 'setting/getSetting',
     });
-    // dispatch({
-    //   type: 'menu/fetch',
-    // });
-    getMenu().then(res => {
-      this.setState({
-        menuData: memoizeOneFormatter(res),
-      });
-      this.breadcrumbNameMap = this.getBreadcrumbNameMap();
+    dispatch({
+      type: 'menu/fetch',
     });
     this.renderRef = requestAnimationFrame(() => {
       this.setState({
@@ -149,7 +155,7 @@ class BasicLayout extends React.PureComponent {
     const {location} = this.props;
     return {
       location,
-      breadcrumbNameMap: this.breadcrumbNameMap,
+      breadcrumbNameMap: this.getBreadcrumbNameMap(),
     };
   }
 
@@ -158,7 +164,7 @@ class BasicLayout extends React.PureComponent {
       route: {routes},
     } = this.props;*/
     const {
-      menuData: routes,
+      menu: routes,
     } = this.props;
     return memoizeOneFormatter(routes);
   }
@@ -169,7 +175,8 @@ class BasicLayout extends React.PureComponent {
    */
   getBreadcrumbNameMap() {
     const routerMap = {};
-    const {menuData} = this.state;
+    // const {menuData} = this.state;
+    const menuData=this.getMenuData();
     const mergeMenuAndRouter = data => {
       data.forEach(menuItem => {
         if (menuItem.children) {
@@ -248,7 +255,8 @@ class BasicLayout extends React.PureComponent {
       location: {pathname},
     } = this.props;
     const {isMobile} = this.state;
-    const {menuData} = this.state;
+    // const {menuData} = this.state;
+    const menuData=this.getMenuData();
     const isTop = PropsLayout === 'topmenu';
     const routerConfig = this.matchParamsPath(pathname);
     const layout = (
@@ -306,9 +314,9 @@ class BasicLayout extends React.PureComponent {
   }
 }
 
-export default connect(({global, setting}) => ({
+export default connect(({global, setting, menu}) => ({
   collapsed: global.collapsed,
   layout: setting.layout,
-  // menuData: menu,
+  menu: menu,
   ...setting,
 }))(BasicLayout);
