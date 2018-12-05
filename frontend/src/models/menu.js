@@ -1,4 +1,4 @@
-import {getMenu} from '@/services/menu';
+import { getMenu } from '@/services/menu';
 
 export default {
   namespace: 'menu',
@@ -6,7 +6,7 @@ export default {
   state: [],
 
   effects: {
-    * fetch(_, {call, put}) {
+    *fetch(_, { call, put }) {
       const response = yield call(getMenu);
       yield put({
         type: 'save',
@@ -17,7 +17,7 @@ export default {
 
   reducers: {
     save(state, action) {
-      return [...state, ...action.payload];
+      return [...action.payload];
     },
   },
 };

@@ -1,5 +1,6 @@
 package org.piaohao.fashionadmin.module.system.menu;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
 import org.piaohao.fashionadmin.annotation.ClearAuth;
 import org.piaohao.fashionadmin.db.system.entity.Permission;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +20,7 @@ public class MenuController {
     @Autowired
     private IPermissionService permissionService;
 
-    @GetMapping("/api/getMenu")
+    @GetMapping("/api/getMenu2")
     public Object getMenu2() {
         String jsonStr = "[\n" +
                 "    {\n" +
@@ -263,7 +265,7 @@ public class MenuController {
         return JSONUtil.parseArray(jsonStr);
     }
 
-    @GetMapping("/api/getMenu1")
+    @GetMapping("/api/getMenu")
     public Object getMenu() {
         List<Permission> permissions = permissionService.list();
         List<Menu> menus = permissions.stream()
@@ -275,7 +277,18 @@ public class MenuController {
                         .parentCode(p.getParentCode())
                         .build())
                 .collect(Collectors.toList());
-        return getMenus("root", menus);
+        List<Menu> menuList = getMenus("root", menus);
+        menuList.add(0, Menu.builder()
+                .name("Dashboard")
+                .path("/dashboard")
+                .icon("dashboard")
+                .children(CollUtil.newArrayList(Menu.builder()
+                        .name("首页")
+                        .path("/dashboard/welcome")
+                        .icon("home")
+                        .build()))
+                .build());
+        return menuList;
     }
 
     @ClearAuth
@@ -283,16 +296,39 @@ public class MenuController {
     public Object allMenu() {
         List<Permission> permissions = permissionService.list();
         List<Router> routers = permissions.stream()
-                .map(p -> Router.builder()
-                        .name(p.getName())
-                        .path(p.getUrl())
-                        .icon(p.getIcon())
-                        .code(p.getCode())
-                        .parentCode(p.getParentCode())
-                        .component(p.getComponent())
-                        .build())
+                .map(p -> {
+                    Router.RouterBuilder routerBuilder = Router.builder()
+                            .name(p.getName())
+                            .path(p.getUrl())
+                            .icon(p.getIcon())
+                            .code(p.getCode())
+                            .parentCode(p.getParentCode())
+                            .component(p.getComponent());
+                    if (p.getLevel() == 1) {
+                        routerBuilder.component(null);
+                    }
+                    return routerBuilder.build();
+                })
                 .collect(Collectors.toList());
-        return getRoutes("root", routers);
+        Router loginRouter = Router.builder()
+                .path("/user")
+                .component("../layouts/UserLayout")
+                .routes(CollUtil.newArrayList(
+                        Router.builder().path("/user").redirect("/user/login").build(),
+                        Router.builder().path("/user/login").component("./User/Login").build(),
+                        Router.builder().path("/user/register").component("./User/Register").build()))
+                .build();
+        Router mainRouter = Router.builder()
+                .path("/")
+                .component("../layouts/BasicLayout")
+                .routes(CollUtil.newArrayList())
+                .build();
+        mainRouter.getRoutes().add(Router.builder().path("/").redirect("/dashboard/welcome").build());
+        mainRouter.getRoutes().add(Router.builder().path("/dashboard/welcome").name("首页").icon("home").component("./Dashboard/Welcome").build());
+        mainRouter.getRoutes().addAll(getRoutes("root", routers));
+        mainRouter.getRoutes().add(Router.builder().component("404").build());
+        ArrayList<Router> holeRouters = CollUtil.newArrayList(loginRouter, mainRouter);
+        return "export default " + JSONUtil.toJsonStr(holeRouters) + ";";
     }
 
     /**
