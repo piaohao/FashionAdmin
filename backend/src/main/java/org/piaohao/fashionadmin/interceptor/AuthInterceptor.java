@@ -24,11 +24,8 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (method.isAnnotationPresent(ClearAuth.class)) {
             return true;
         }
-        Map<String, String> info = null;
-        info = JwtUtil.verifyToken(token);
-        if (!info.get("id").equals("111111")) {
-            return false;
-        }
+        Map<String, String> info = JwtUtil.verifyToken(token);
+        request.setAttribute("userId", info.get("userId"));
         return true;
     }
 }

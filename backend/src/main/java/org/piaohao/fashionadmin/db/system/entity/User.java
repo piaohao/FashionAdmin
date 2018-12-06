@@ -4,13 +4,15 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 权限表
+ * 用户
  * </p>
  *
  * @author piaohao
@@ -19,41 +21,26 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("sys_permission")
-public class Permission implements Serializable {
+@TableName("sys_user")
+public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
-
-    private String code;
-
-    private String parentCode;
-
-    private String name;
-
-    private String icon;
-
-    private String url;
-
     /**
-     * 组件路径
+     * ID
      */
-    private String component;
+    @TableId(value = "id", type = IdType.AUTO)
+    private Integer id;
 
-    private Integer priority;
+    private String userName;
+    private String password;
 
-    private Integer level;
-
-    private Integer isMenu;
-
-    private String tips;
-
+    private String nickName;
+    @JsonIgnore
     private Integer status;
-
+    @JsonIgnore
     private Long createdTime;
-
+    @JsonIgnore
     private Long updateTime;
 
 

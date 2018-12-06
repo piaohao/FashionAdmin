@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 
 /**
  * <p>
- * 权限表
+ * 
  * </p>
  *
  * @author piaohao
@@ -19,42 +19,21 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("sys_permission")
-public class Permission implements Serializable {
+@TableName("sys_role")
+public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    private String code;
-
-    private String parentCode;
-
-    private String name;
-
-    private String icon;
-
-    private String url;
-
-    /**
-     * 组件路径
-     */
-    private String component;
-
-    private Integer priority;
-
-    private Integer level;
-
-    private Integer isMenu;
-
-    private String tips;
+    private String roleName;
 
     private Integer status;
 
     private Long createdTime;
 
-    private Long updateTime;
+    private Long updateeTime;
 
 
 }

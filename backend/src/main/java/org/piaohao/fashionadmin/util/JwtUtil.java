@@ -53,9 +53,9 @@ public class JwtUtil {
             map = jwt.getClaims();
         } catch (Exception e) {
             if (e instanceof TokenExpiredException) {
-                throw new ServiceException(ResultCode.AUTH_EXPIRE);
+                throw new ServiceException(ResultCode.AUTH_TOKEN_EXPIRE);
             }
-            throw new ServiceException(ResultCode.AUTH_DENY);
+            throw new ServiceException(ResultCode.AUTH_TOKEN_DENY);
         }
         Map<String, String> resultMap = new HashMap<>(map.size());
         map.forEach((k, v) -> resultMap.put(k, v.asString()));
