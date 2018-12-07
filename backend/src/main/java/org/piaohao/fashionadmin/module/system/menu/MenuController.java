@@ -323,10 +323,21 @@ public class MenuController {
                 .component("../layouts/BasicLayout")
                 .routes(CollUtil.newArrayList())
                 .build();
-        mainRouter.getRoutes().add(Router.builder().path("/").redirect("/dashboard/welcome").build());
-        mainRouter.getRoutes().add(Router.builder().path("/dashboard/welcome").name("首页").icon("home").component("./Dashboard/Welcome").build());
-        mainRouter.getRoutes().addAll(getRoutes("root", routers));
-        mainRouter.getRoutes().add(Router.builder().component("404").build());
+        List<Router> routes = mainRouter.getRoutes();
+        routes.add(Router.builder().path("/").redirect("/dashboard/welcome").build());
+        routes.add(Router.builder().path("/dashboard/welcome").name("首页").icon("home").component("./Dashboard/Welcome").build());
+        routes.addAll(getRoutes("root", routers));
+        routes.add(Router.builder()
+                .name("exception")
+                .path("/exception")
+                .routes(CollUtil.newArrayList(
+                        Router.builder().path("/exception/403").name("not-permission").component("./Exception/403").build(),
+                        Router.builder().path("/exception/404").name("not-find").component("./Exception/404").build(),
+                        Router.builder().path("/exception/500").name("server-error").component("./Exception/500").build(),
+                        Router.builder().path("/exception/trigger").name("trigger").component("./Exception/TriggerException").build()
+                ))
+                .build());
+        routes.add(Router.builder().component("404").build());
         ArrayList<Router> holeRouters = CollUtil.newArrayList(loginRouter, mainRouter);
         return "export default " + JSONUtil.toJsonStr(holeRouters) + ";";
     }

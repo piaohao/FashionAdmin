@@ -33,7 +33,7 @@ public class Role implements Serializable {
 
     private Long createdTime;
 
-    private Long updateeTime;
+    private Long updateTime;
 
 
 }

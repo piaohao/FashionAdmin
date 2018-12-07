@@ -12,6 +12,14 @@ spring:
       idle-timeout: 180000
       maximum-pool-size: 10
       auto-commit: true
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      WRITE_NULL_MAP_VALUES: false
+    deserialization:
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+    default-property-inclusion: non_null
 
 server:
   port: 8080

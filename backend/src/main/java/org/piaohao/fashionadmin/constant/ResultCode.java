@@ -14,7 +14,9 @@ public enum ResultCode {
     AUTH_TOKEN_GENERATE_FAILED(10014, "token生成异常"),
     USER_NOT_EXISTS(10015, "用户不存在"),
     USER_NAME_CONFLICT(10016, "用户名冲突"),
+    ROLE_NAME_CONFLICT(10017, "角色名冲突"),
 
+    RESOURCE_NOT_EXISTS(10001, "资源不存在"),
     DEFAULT_ERROR(10000, "系统繁忙");
 
     @Getter

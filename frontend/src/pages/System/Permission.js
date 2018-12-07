@@ -1,98 +1,84 @@
-import React from 'react';
+import React, {PureComponent} from 'react';
 import {formatMessage, FormattedMessage} from 'umi/locale';
-import {Button, Row, Col, Icon, Steps, Card, Table} from 'antd';
-import Result from '@/components/Result';
+import {Card, Table, Icon, Switch, Badge} from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import RenderAuthorized from '@/components/Authorized';
-import {getAuthority} from '@/utils/authority';
+import {connect} from 'dva';
 
-const Authority = getAuthority();
-const Authorized = RenderAuthorized(Authority);
+@connect(({permission, loading}) => ({
+  permission,
+  loading: loading.models.permission,
+}))
+export default class Permission extends PureComponent {
 
-const columns = [{
-  title: 'Name',
-  dataIndex: 'name',
-  key: 'name',
-}, {
-  title: 'Age',
-  dataIndex: 'age',
-  key: 'age',
-  width: '12%',
-}, {
-  title: 'Address',
-  dataIndex: 'address',
-  width: '30%',
-  key: 'address',
-}];
-
-const data = [{
-  key: 1,
-  name: 'John Brown sr.',
-  age: 60,
-  address: 'New York No. 1 Lake Park',
-  children: [{
-    key: 11,
-    name: 'John Brown',
-    age: 42,
-    address: 'New York No. 2 Lake Park',
+  columns = [{
+    title: 'ID',
+    dataIndex: 'id',
+    key: 'id',
+    width: '12%',
   }, {
-    key: 12,
-    name: 'John Brown jr.',
-    age: 30,
-    address: 'New York No. 3 Lake Park',
-    children: [{
-      key: 121,
-      name: 'Jimmy Brown',
-      age: 16,
-      address: 'New York No. 3 Lake Park',
-    }],
+    title: '编码',
+    dataIndex: 'code',
+    key: 'code',
   }, {
-    key: 13,
-    name: 'Jim Green sr.',
-    age: 72,
-    address: 'London No. 1 Lake Park',
-    children: [{
-      key: 131,
-      name: 'Jim Green',
-      age: 42,
-      address: 'London No. 2 Lake Park',
-      children: [{
-        key: 1311,
-        name: 'Jim Green jr.',
-        age: 25,
-        address: 'London No. 3 Lake Park',
-      }, {
-        key: 1312,
-        name: 'Jimmy Green sr.',
-        age: 18,
-        address: 'London No. 4 Lake Park',
-      }],
-    }],
-  }],
-}, {
-  key: 2,
-  name: 'Joe Black',
-  age: 32,
-  address: 'Sidney No. 1 Lake Park',
-}];
+    title: '父编码',
+    dataIndex: 'parentCode',
+    key: 'parentCode',
+  }, {
+    title: '名称',
+    dataIndex: 'name',
+    key: 'name',
+  }, {
+    title: '图标',
+    dataIndex: 'icon',
+    key: 'icon',
+    render: function (text, record, index) {
+      return (
+        <Icon type={text}/>
+      );
+    }
+  }, {
+    title: '路径',
+    dataIndex: 'url',
+    key: 'url',
+  }, {
+    title: '层级',
+    dataIndex: 'level',
+    key: 'level',
+    render: function (text, record, index) {
+      const color = text === 1 ? '#52c41a' : '#faad14';
+      return <Badge count={text} style={{backgroundColor: color}}/>;
+    }
+  }, {
+    title: '排序',
+    dataIndex: 'priority',
+    key: 'priority',
+    render: function (text, record, index) {
+      return <Badge count={text} style={{backgroundColor: '#52c41a'}}/>;
+    }
+  }, {
+    title: '是菜单',
+    dataIndex: 'isMenu',
+    key: 'isMenu',
+    render: function (text, record, index) {
+      return <Switch checkedChildren="是" unCheckedChildren="否" defaultChecked={text === 1} disabled/>;
+    }
+  }];
 
-// rowSelection objects indicates the need for row selection
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  onSelect: (record, selected, selectedRows) => {
-    console.log(record, selected, selectedRows);
-  },
-  onSelectAll: (selected, selectedRows, changeRows) => {
-    console.log(selected, selectedRows, changeRows);
-  },
+  componentDidMount() {
+    this.props.dispatch({
+      type: 'permission/fetch',
+    });
+  }
+
+  render() {
+    const {permission} = this.props;
+    return (
+      <PageHeaderWrapper>
+        <Card bordered={false}>
+          <Table columns={this.columns} dataSource={permission} bordered={false}/>
+        </Card>
+      </PageHeaderWrapper>
+    );
+  }
 };
 
-export default () => (
-  <PageHeaderWrapper>
-    <Card bordered={false}>
-      <Table columns={columns} rowSelection={rowSelection} dataSource={data}/>
-    </Card>
-  </PageHeaderWrapper>
-);
