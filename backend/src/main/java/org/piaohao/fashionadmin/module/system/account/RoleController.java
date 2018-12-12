@@ -40,6 +40,11 @@ public class RoleController {
         return TableData.fromPage(page);
     }
 
+    @PostMapping("/api/allRoles")
+    public Object allRoles() {
+        return roleService.list();
+    }
+
     @PostMapping("/api/saveRole")
     public Object saveRole(@RequestBody Role role) {
         Integer id = role.getId();
@@ -93,6 +98,7 @@ public class RoleController {
                     return rolePermission;
                 })
                 .collect(Collectors.toList());
+        rolePermissionService.remove(new LambdaQueryWrapper<RolePermission>().eq(RolePermission::getRoleId, roleId));
         rolePermissionService.saveBatch(rolePermissions);
         return "";
     }

@@ -1,6 +1,6 @@
-import React, {PureComponent} from 'react';
+import React, {PureComponent, Fragment} from 'react';
 import {formatMessage, FormattedMessage} from 'umi/locale';
-import {Button, Card, Dropdown, Form, Icon, Input, Menu, message, Modal, Tree} from 'antd';
+import {Button, Card, Dropdown, Form, Icon, Input, Menu, message, Modal, Tree, Divider} from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import StandardTable from "@/components/StandardTable";
 import {connect} from 'dva';
@@ -38,7 +38,7 @@ class CreateForm extends PureComponent {
         <FormItem labelCol={{span: 5}} wrapperCol={{span: 15}} label="角色名">
           {form.getFieldDecorator('roleName', {
             rules: [{required: true, message: '请输入至少两个字符的角色名！ ', min: 2}],
-            initialValue: formVal.userName,
+            initialValue: formVal.roleName,
           })(<Input placeholder="请输入"/>)}
         </FormItem>
       </Modal>
@@ -51,6 +51,21 @@ class PermissionWin extends PureComponent {
   state = {
     checkedKeys: [],
   };
+
+  constructor(props) {
+    super(props);
+  }
+
+  componentDidMount() {
+
+  }
+
+  componentWillReceiveProps(nextProps, nextContext) {
+    const {permissionIds} = this.props;
+    this.setState({
+      checkedKeys: permissionIds,
+    });
+  }
 
   okHandle = () => {
     const {handleSavePermission, roleId} = this.props;
@@ -72,12 +87,13 @@ class PermissionWin extends PureComponent {
 
   onCheck = (checkedKeys, e) => {
     this.setState({
-      checkedKeys: checkedKeys,
+      checkedKeys
     });
   };
 
   render() {
-    const {permissionWinVisible, handlePermissionWinVisible, allPermissions, permissionIds} = this.props;
+    const {permissionWinVisible, handlePermissionWinVisible, allPermissions} = this.props;
+    const {checkedKeys} = this.state;
     return (
       <Modal
         destroyOnClose
@@ -87,14 +103,15 @@ class PermissionWin extends PureComponent {
         onCancel={() => handlePermissionWinVisible()}
       >
         <Tree
-          checkable={true}
+          checkable
           // onExpand={this.onExpand}
           // expandedKeys={this.state.expandedKeys}
           // autoExpandParent={this.state.autoExpandParent}
           onCheck={this.onCheck}
-          checkedKeys={permissionIds}
+          checkedKeys={checkedKeys}
           // onSelect={this.onSelect}
           // selectedKeys={this.state.selectedKeys}
+          destroyOnClose={true}
         >
           {this.renderTreeNodes(allPermissions)}
         </Tree>
@@ -130,19 +147,21 @@ export default class Role extends PureComponent {
     title: '角色名',
     dataIndex: 'roleName',
     key: 'roleName',
-  }];
+  }, {
+    title: '操作',
+    render: (text, record) => (
+      <Fragment>
+        <a onClick={() => this.handleModalVisible(true, 'update', record)}>编辑</a>
+        <Divider type="vertical"/>
+        <a onClick={() => this.handlePermissionWinVisible(true, record)}>权限</a>
+      </Fragment>
+    ),
+  },];
 
-  handleModalVisible = (flag, action) => {
-    const {selectedRows} = this.state;
+  handleModalVisible = (flag, action, record) => {
+    // const {selectedRows} = this.state;
     if (action === "update") {
-      if (selectedRows.length !== 1) {
-        message.warn("请选择且最多一条记录！");
-        return;
-      } else {
-        if (selectedRows.length > 0) {
-          this.setState({formVal: selectedRows[0]});
-        }
-      }
+      this.setState({formVal: record});
     }
     this.setState({
       modalVisible: !!flag,
@@ -150,23 +169,24 @@ export default class Role extends PureComponent {
     });
   };
 
-  handlePermissionWinVisible = (flag) => {
-    const {selectedRows} = this.state;
+  handlePermissionWinVisible = (flag, record) => {
     const {dispatch} = this.props;
-    if (selectedRows.length !== 1) {
-      message.warn("请选择且最多一条记录！");
-      return;
+    if (!record) {
+      this.setState({
+        permissionWinVisible: !!flag,
+      });
+    } else {
+      dispatch({
+        type: 'role/getRolePermission',
+        payload: {
+          id: record.id,
+        }
+      });
+      this.setState({
+        permissionWinVisible: !!flag,
+        roleId: record.id,
+      });
     }
-    dispatch({
-      type: 'role/getRolePermission',
-      payload: {
-        id: selectedRows[0].id,
-      }
-    });
-    this.setState({
-      permissionWinVisible: !!flag,
-      roleId: selectedRows[0].id,
-    });
   };
 
   handleUpdateModalVisible = (flag, record) => {
@@ -314,12 +334,12 @@ export default class Role extends PureComponent {
               <Button icon="plus" type="primary" onClick={() => this.handleModalVisible(true, "save")}>
                 新建
               </Button>
-              <Button icon="edit" type="primary" onClick={() => this.handleModalVisible(true, "update")}>
+              {/*<Button icon="edit" type="primary" onClick={() => this.handleModalVisible(true, "update")}>
                 更新
               </Button>
               <Button icon="edit" type="primary" onClick={() => this.handlePermissionWinVisible(true)}>
                 权限
-              </Button>
+              </Button>*/}
               {selectedRows.length > 0 && (
                 <span>
                   {/*<Button>批量操作</Button>*/}

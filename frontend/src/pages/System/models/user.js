@@ -1,4 +1,5 @@
-import {query as queryUsers, saveUser, removeUser} from '@/services/user';
+import {query as queryUsers, saveUser, removeUser, getRoleIds,saveUserRole} from '@/services/user';
+import {allRoles} from "@/services/role";
 import {routerRedux} from "dva/router"
 
 export default {
@@ -9,6 +10,8 @@ export default {
       list: [],
       pagination: {},
     },
+    roleIds: [],
+    allRoles: [],
   },
 
   effects: {
@@ -35,6 +38,24 @@ export default {
       yield put(routerRedux.push("/system/user", {...payload}));
       if (callback) callback();
     },
+    * getRoleIds({payload}, {call, put}) {
+      const response = yield call(getRoleIds, payload);
+      yield put({
+        type: 'saveRoleIds',
+        payload: response,
+      });
+    },
+    * allRoles({payload}, {call, put}) {
+      const response = yield call(allRoles, payload);
+      yield put({
+        type: 'saveAllRoles',
+        payload: response,
+      });
+    },
+    * saveUserRole({payload, callback}, {call, put}) {
+      yield call(saveUserRole, payload);
+      if (callback) callback();
+    },
   },
 
   reducers: {
@@ -42,6 +63,18 @@ export default {
       return {
         ...state,
         data: action.payload,
+      };
+    },
+    saveRoleIds(state, action) {
+      return {
+        ...state,
+        roleIds: action.payload,
+      };
+    },
+    saveAllRoles(state, action) {
+      return {
+        ...state,
+        allRoles: action.payload,
       };
     },
   },

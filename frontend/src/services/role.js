@@ -9,6 +9,15 @@ export async function query(params) {
   });
 }
 
+export async function allRoles(params) {
+  return request('/api/allRoles', {
+    method: "POST",
+    body: {
+      ...params,
+    }
+  });
+}
+
 export async function saveRole(params) {
   return request('/api/saveRole', {
     method: "POST",

@@ -10,14 +10,20 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.piaohao.fashionadmin.annotation.ClearAuth;
 import org.piaohao.fashionadmin.constant.ResultCode;
+import org.piaohao.fashionadmin.db.system.entity.Role;
+import org.piaohao.fashionadmin.db.system.entity.RolePermission;
 import org.piaohao.fashionadmin.db.system.entity.User;
+import org.piaohao.fashionadmin.db.system.entity.UserRole;
 import org.piaohao.fashionadmin.db.system.mapper.UserMapper;
+import org.piaohao.fashionadmin.db.system.service.IUserRoleService;
 import org.piaohao.fashionadmin.db.system.service.IUserService;
 import org.piaohao.fashionadmin.exception.ServiceException;
 import org.piaohao.fashionadmin.model.PageReq;
 import org.piaohao.fashionadmin.model.TableData;
 import org.piaohao.fashionadmin.module.system.account.model.DeleteUserReq;
 import org.piaohao.fashionadmin.module.system.account.model.LoginReq;
+import org.piaohao.fashionadmin.module.system.account.model.RolePermissionReq;
+import org.piaohao.fashionadmin.module.system.account.model.UserRoleReq;
 import org.piaohao.fashionadmin.util.JwtUtil;
 import org.piaohao.fashionadmin.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 public class AccountController {
@@ -34,6 +41,8 @@ public class AccountController {
     private IUserService userService;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private IUserRoleService userRoleService;
 
     @PostMapping("/api/login/account")
     @ClearAuth
@@ -122,6 +131,35 @@ public class AccountController {
             userService.updateById(record);
         }
 
+        return "";
+    }
+
+    @PostMapping("/api/getRoleIds")
+    public Object users(@RequestBody User user) {
+        return userRoleService.list(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, user.getId()))
+                .stream()
+                .map(UserRole::getRoleId)
+                .collect(Collectors.toList());
+    }
+
+    @PostMapping("/api/saveUserRole")
+    public Object saveUserRole(@RequestBody UserRoleReq req) {
+        Integer userId = req.getUserId();
+        User record = userService.getById(userId);
+        if (record == null) {
+            throw new ServiceException(ResultCode.USER_NOT_EXISTS);
+        }
+        List<Integer> roleIds = req.getRoleIds();
+        List<UserRole> userRoles = roleIds.stream()
+                .map(roleId -> {
+                    UserRole userRole = new UserRole();
+                    userRole.setUserId(userId);
+                    userRole.setRoleId(roleId);
+                    return userRole;
+                })
+                .collect(Collectors.toList());
+        userRoleService.remove(new LambdaQueryWrapper<UserRole>().eq(UserRole::getUserId, userId));
+        userRoleService.saveBatch(userRoles);
         return "";
     }
 

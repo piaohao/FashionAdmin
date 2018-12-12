@@ -30,3 +30,21 @@ export async function removeUser(params) {
     }
   });
 }
+
+export async function getRoleIds(params) {
+  return request('/api/getRoleIds', {
+    method: "POST",
+    body: {
+      ...params,
+    }
+  });
+}
+
+export async function saveUserRole(params) {
+  return request('/api/saveUserRole', {
+    method: "POST",
+    body: {
+      ...params,
+    }
+  });
+}
